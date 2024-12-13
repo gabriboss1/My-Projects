@@ -1,4 +1,4 @@
-#Stock Tracker App
+# Stock Tracker App
 
 This was a cool project that I wanted to do for a long time. I wanted to recreate a Bloomberg Terminal, and I think that I succeeded in that, considering the resources available to me. 
 
