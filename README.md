@@ -8,7 +8,6 @@ Project Bucket List:
 
 1. 2D Obstacle Golf
 2. Chess Game
-3. Tic-Tac-Toe
 4. Ping-Pong
 5. Flappy Bird
 6. Sudoku
