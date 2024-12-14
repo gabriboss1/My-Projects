@@ -8,12 +8,11 @@ Project Bucket List:
 
 1. 2D Obstacle Golf
 2. Chess Game
-4. Ping-Pong
-6. Sudoku
-7. Block Blast
-8. Web Scraper (regarding Stock picks)
-9. To-Do app
-10. Personal Portfolio/Stock Tracker
-11. Flashcard App
-12. Typing Speed Test
-13. ChatGPT add-on
+3. Sudoku
+4. Block Blast
+5. Web Scraper (regarding Stock picks)
+6. To-Do app
+7. Personal Portfolio/Stock Tracker
+8. Flashcard App
+9. Typing Speed Test
+10. ChatGPT add-on
