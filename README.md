@@ -9,7 +9,6 @@ Project Bucket List:
 1. 2D Obstacle Golf
 2. Chess Game
 4. Ping-Pong
-5. Flappy Bird
 6. Sudoku
 7. Block Blast
 8. Web Scraper (regarding Stock picks)
