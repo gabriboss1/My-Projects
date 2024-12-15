@@ -15,4 +15,15 @@ Project Bucket List:
 7. Flashcard App
 8. Typing Speed Test
 9. ChatGPT add-on
-10. Messaging App
+
+
+Projects Done:
+
+1. 2048 Game
+2. Maze Game
+3. Flappy Bird Game
+4. Tic Tac Toe Game
+5. Sudoku Game
+6. Stock Tracker App
+7. Messaging App
+8. 
