@@ -1,7 +1,7 @@
 <!-- 9/5/2024 -->
 <!-- This was a game I used to play. I made my own version, where a player has 3 randomly generated blocks they can choose from, and can place 2 of them wherever they want. They can also choose the same block twice. -->
-<!-- The aim of the game is to clear one row. -->
-<!-- I got better at interfaces/layouts and at handling dynamic content.  -->
+<!-- The aim of the player is to clear a row by placing adjacent blocks. -->
+<!-- This has given me insight into creating nicer, more responsive interfaces and handling dynamic content. -->
 
 <!DOCTYPE html>
 <html lang="en">
