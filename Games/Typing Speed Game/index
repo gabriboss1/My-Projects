@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="options">
+            <label>Time:
+                <select id="time-select">
+                    <option value="10">10s</option>
+                    <option value="15">15s</option>
+                    <option value="30" selected>30s</option>
+                </select>
+            </label>
+            <label>
+                <input type="checkbox" id="punctuation-toggle"> Include Punctuation
+            </label>
+            <label>
+                <input type="checkbox" id="uppercase-toggle"> Include Uppercase
+            </label>
+            <button id="start-btn">Start</button>
+        </div>
+
+        <div id="text-output"></div>
+        <input id="text-input" autofocus placeholder="Start typing..." style="display:none;" />
+        
+        <div id="stats" style="display:none;">
+            <span id="timer">Time: 0s</span>
+            <span id="wpm">WPM: 0</span>
+        </div>
+        
+        <div id="end-screen" style="display:none;">
+            <h2>Typing Test Complete!</h2>
+            <p id="end-wpm"></p>
+            <button id="redo-btn">🔄</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
