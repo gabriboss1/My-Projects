@@ -15,3 +15,4 @@ Project Bucket List:
 7. Flashcard App
 8. Typing Speed Test
 9. ChatGPT add-on
+10. Messaging App
