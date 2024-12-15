@@ -4,8 +4,8 @@ Gabriele's cool coding projects since November 2023.
 
 
 
-Project Bucket List:
-
+**Project Bucket List:
+**
 1. 2D Obstacle Golf
 2. Chess Game
 3. Sudoku
@@ -18,8 +18,8 @@ Project Bucket List:
 
 
 
-Projects Done:
-
+**Projects Done:
+**
 1. 2048 Game
 2. Maze Game
 3. Flappy Bird Game
