@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Roboto", Arial, sans-serif;
+            background-color: #001f3d; 
+            color: #fff; 
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 60%;
+            max-width: 900px; 
+            min-width: 400px;
+            border: 1px solid #ddd;
+        }
+
+        h2 {
+            text-align: center;
+            color: #d32f2f; 
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        #messages {
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            background-color: #f1f1f1;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 15px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .message .username {
+            font-weight: 600;
+            color: #001f3d; 
+            flex-grow: 1; 
+        }
+
+        .message .timestamp {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+            text-align: right; 
+            flex-shrink: 0;
+            margin-left: 10px; 
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            width: 100%;
+        }
+
+        .message.user {
+            background-color: #d32f2f;
+            color: #fff;
+            align-self: flex-end;
+        }
+
+        .message.other {
+            background-color: #e3f2fd; 
+            color: #333;
+            align-self: flex-start; 
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            background-color: #d32f2f; 
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #b71c1c;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #usernameForm {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 80%;
+                padding: 25px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            input[type="text"], button {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>ASM Chat Room</h2>
+
+        <div id="usernameForm">
+            <input id="username" type="text" placeholder="Enter username" required>
+            <button id="set-username">Set Username</button>
+        </div>
+
+        <div id="chatForm" style="display: none;">
+            <div id="messages"></div>
+            <div id="input-area">
+                <input id="message" type="text" placeholder="Type a message">
+                <button id="send-message">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+    
+        const messages = document.getElementById("messages");
+        const userIn = document.getElementById("username");
+        const userBut = document.getElementById("set-username");
+        const input = document.getElementById("message");
+        const messageBut = document.getElementById("send-message");
+        const chatForm = document.getElementById("chatForm");
+        const userForm = document.getElementById("usernameForm");
+    
+        let username = "";
+    
+        userBut.addEventListener("click", () => {
+            username = userIn.value.trim();
+            if (username) {
+                socket.emit("set_username", { username });
+                userForm.style.display = "none";
+                chatForm.style.display = "block";
+            }
+        });
+    
+        messageBut.addEventListener("click", () => {
+            const message = input.value.trim();
+            if (message) {
+                socket.emit("message", { message });
+                input.value = ""; 
+            }
+        });
+    
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                const message = input.value.trim();
+                if (message) {
+                    socket.emit("message", { message });
+                    input.value = ""; 
+                }
+            }
+        });
+    
+        socket.on("chat_history", (history) => {
+            history.forEach(msg => {
+                const msgDiv = document.createElement("div");
+                msgDiv.classList.add("message");
+    
+                const header = document.createElement("div");
+                header.classList.add("message-header");
+    
+                const usernameSpan = document.createElement("span");
+                usernameSpan.classList.add("username");
+                usernameSpan.textContent = msg.username;
+    
+                const timestampSpan = document.createElement("span");
+                timestampSpan.classList.add("timestamp");
+                timestampSpan.textContent = msg.timestamp;
+    
+                header.appendChild(usernameSpan);
+                header.appendChild(timestampSpan);
+    
+                const msgContent = document.createElement("div");
+                msgContent.classList.add("message-content");
+                msgContent.textContent = msg.content;
+    
+                msgDiv.appendChild(header);
+                msgDiv.appendChild(msgContent);
+    
+                messages.appendChild(msgDiv);
+            });
+        });
+    
+        socket.on("broadcast", (message) => {
+            const msgDiv = document.createElement("div");
+            msgDiv.classList.add("message");
+    
+            const header = document.createElement("div");
+            header.classList.add("message-header");
+    
+            const usernameSpan = document.createElement("span");
+            usernameSpan.classList.add("username");
+            usernameSpan.textContent = message.username;
+    
+            const timestampSpan = document.createElement("span");
+            timestampSpan.classList.add("timestamp");
+            timestampSpan.textContent = message.timestamp;
+    
+            header.appendChild(usernameSpan);
+            header.appendChild(timestampSpan);
+    
+            const msgContent = document.createElement("div");
+            msgContent.classList.add("message-content");
+            msgContent.textContent = message.content;
+    
+            msgDiv.appendChild(header);
+            msgDiv.appendChild(msgContent);
+    
+            messages.appendChild(msgDiv);
+            messages.scrollTop = messages.scrollHeight;
+        });
+    </script>
+</body>
+</html>
