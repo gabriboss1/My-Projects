@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 from time import strftime
+import socket
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -18,7 +19,6 @@ def username(data):
     usernames[request.sid] = data["username"]
     print(f"Username set for {request.sid}: {data['username']}")
     emit("chat_history", history, to=request.sid)
-    broadcast(f"{data['username']} has joined the chat.")
 
 @socketio.on("connect")
 def connect():
@@ -32,19 +32,18 @@ def disconnect():
     if request.sid in clients:
         clients.remove(request.sid)
     if request.sid in usernames:
-        broadcast(f"{username} has left the chat.")
         del usernames[request.sid]
 
 @socketio.on("message")
 def message(data):
     time = strftime("%Y-%m-%d %H:%M:%S")
     username = usernames.get(request.sid, "Unknown")
-    message = f"[{time}] {username}: {data['message']}"
-    history.append(message)
-    broadcast(message)
+    msg = {"username": username, "timestamp": time, "content": data['message']}
+    history.append(msg)
+    broadcast(msg)
 
 def broadcast(message):
     for client_id in clients:
         emit("broadcast", message, to=client_id)
 
-socketio.run(app, host="0.0.0.0", debug=True, allow_unsafe_werkzeug=True)
+socketio.run(app, host=socket.gethostbyname(socket.gethostname()), debug=True, allow_unsafe_werkzeug=True)
