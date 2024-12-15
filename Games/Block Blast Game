@@ -1,0 +1,314 @@
+<!-- 9/5/2024 -->
+<!-- This was a game I used to play. I made my own version, where a player has 3 randomly generated blocks they can choose from, and can place 2 of them wherever they want. They can also choose the same block twice. -->
+<!-- The aim of the game is to clear one row. -->
+<!-- I got better at interfaces/layouts and at handling dynamic content.  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Blast</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e1e;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #score, #bestScore {
+            font-size: 24px;
+            margin: 20px;
+            font-weight: bold;
+        }
+        canvas {
+            margin: 20px auto;
+            display: block;
+            background-color: #222;
+            border: 2px solid #333;
+            border-radius: 10px;
+        }
+        .blocks-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .block {
+            display: grid;
+            gap: 2px;
+            position: relative;
+            cursor: grab;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .block div {
+            width: 20px;
+            height: 20px;
+            background-color: transparent;
+            border-radius: 4px;
+        }
+        .block-filled {
+            background-color: #fff;
+        }
+        .shadow {
+            opacity: 0.5;
+        }
+        #score, #bestScore {
+            color: #4CAF50;
+        }
+        .block-filled {
+            background-color: #FF6F61;
+        }
+        .block-shadow {
+            background-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+
+<div id="score">Score: 0</div>
+<div id="bestScore">Best Score: 0</div>
+<canvas id="gameCanvas" width="450" height="500"></canvas>
+
+<div class="blocks-container" id="blockContainer"></div>
+
+<script>
+const gridSize = 9;
+const blockSize = 50;
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const blockColors = ["#FF6F61", "#4CAF50", "#2E7D32", "#FFEB3B"];
+let grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
+let blocks = [];
+let score = 0;
+let bestScore = localStorage.getItem('bestScore') ? parseInt(localStorage.getItem('bestScore')) : 0;
+let blocksPlacedInBatch = 0;
+let activeBlock = null;
+let shadowPosition = null;
+
+const blockShapes = [
+    { shape: [[1, 1, 1], [1, 0, 0]], width: 3, height: 2 },
+    { shape: [[0, 1, 1], [1, 1, 0]], width: 3, height: 2 },
+    { shape: [[1, 1, 1], [1, 1, 1]], width: 3, height: 3 },
+    { shape: [[1, 1], [1, 1]], width: 2, height: 2 },
+    { shape: [[1, 1, 1, 1, 1]], width: 5, height: 1 },
+    { shape: [[1, 1], [1, 0]], width: 2, height: 2 }
+];
+
+function getRandomBlock() {
+    const block = blockShapes[Math.floor(Math.random() * blockShapes.length)];
+    const color = blockColors[Math.floor(Math.random() * blockColors.length)];
+    return { ...block, color };
+}
+
+function drawGrid() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "#ddd";
+
+    for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+            ctx.strokeRect(x * blockSize, y * blockSize, blockSize, blockSize);
+            if (grid[y][x]) {
+                ctx.fillStyle = grid[y][x];
+                ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
+            }
+        }
+    }
+
+    if (shadowPosition && activeBlock) {
+        const { x, y } = shadowPosition;
+        ctx.fillStyle = activeBlock.color + "80";
+        activeBlock.shape.forEach((row, dy) => {
+            row.forEach((cell, dx) => {
+                if (cell === 1) {
+                    ctx.fillRect((x + dx) * blockSize, (y + dy) * blockSize, blockSize, blockSize);
+                }
+            });
+        });
+    }
+}
+
+function drawBlocks() {
+    const blockContainer = document.getElementById("blockContainer");
+    blockContainer.innerHTML = '';
+
+    blocks.forEach((block, index) => {
+        const blockElement = document.createElement("div");
+        blockElement.className = "block";
+        blockElement.style.gridTemplateRows = `repeat(${block.shape.length}, 1fr)`;
+        blockElement.style.gridTemplateColumns = `repeat(${block.shape[0].length}, 1fr)`;
+
+        block.shape.forEach(row => {
+            row.forEach(cell => {
+                const cellDiv = document.createElement("div");
+                if (cell === 1) {
+                    cellDiv.classList.add("block-filled");
+                    cellDiv.style.backgroundColor = block.color;
+                }
+                blockElement.appendChild(cellDiv);
+            });
+        });
+
+        blockElement.setAttribute("data-index", index);
+        blockElement.draggable = true;
+
+        blockElement.addEventListener("dragstart", (e) => {
+            activeBlock = { ...blocks[index], startX: e.offsetX, startY: e.offsetY };
+        });
+
+        blockContainer.appendChild(blockElement);
+    });
+}
+
+function canPlaceBlock(block, x, y) {
+    for (let i = 0; i < block.shape.length; i++) {
+        for (let j = 0; j < block.shape[i].length; j++) {
+            if (block.shape[i][j] === 1) {
+                const gridX = x + j;
+                const gridY = y + i;
+
+                if (gridX < 0 || gridX >= gridSize || gridY < 0 || gridY >= gridSize) {
+                    return false;
+                }
+
+                if (grid[gridY][gridX]) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+function canPlaceAnyBlock() {
+    return blocks.some(block => {
+        for (let y = 0; y < gridSize; y++) {
+            for (let x = 0; x < gridSize; x++) {
+                if (canPlaceBlock(block, x, y)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    });
+}
+
+function placeBlock(block, x, y) {
+    for (let i = 0; i < block.shape.length; i++) {
+        for (let j = 0; j < block.shape[i].length; j++) {
+            if (block.shape[i][j] === 1) {
+                grid[y + i][x + j] = block.color;
+            }
+        }
+    }
+
+    blocksPlacedInBatch++;
+    if (blocksPlacedInBatch === 3) {
+        blocks = [getRandomBlock(), getRandomBlock(), getRandomBlock()];
+        drawBlocks();
+        blocksPlacedInBatch = 0;
+    }
+
+    checkRows();
+
+    if (!canPlaceAnyBlock()) {
+        gameOver();
+    }
+}
+
+function checkRows() {
+    let clearedRows = 0;
+
+    for (let y = 0; y < gridSize; y++) {
+        if (grid[y].every(cell => cell !== null)) {
+            grid.splice(y, 1);
+            grid.unshift(Array(gridSize).fill(null));
+            clearedRows++;
+        }
+    }
+
+    score += clearedRows * 10;
+    document.getElementById("score").innerText = `Score: ${score}`;
+}
+
+canvas.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    if (activeBlock) {
+        const x = Math.floor(e.offsetX / blockSize);
+        const y = Math.floor(e.offsetY / blockSize);
+
+        if (canPlaceBlock(activeBlock, x, y)) {
+            shadowPosition = { x, y };
+        } else {
+            shadowPosition = null;
+        }
+    }
+});
+
+canvas.addEventListener("drop", (e) => {
+    if (activeBlock && shadowPosition) {
+        const { x, y } = shadowPosition;
+
+        placeBlock(activeBlock, x, y);
+
+        const blockIndex = blocks.indexOf(activeBlock);
+        if (blockIndex > -1) {
+            blocks.splice(blockIndex, 1);
+            drawBlocks();
+        }
+
+        blocksPlacedInBatch++;
+        if (blocksPlacedInBatch === 3) {
+            blocks = [getRandomBlock(), getRandomBlock(), getRandomBlock()];
+            drawBlocks();
+            blocksPlacedInBatch = 0;
+        }
+
+        activeBlock = null;
+        shadowPosition = null;
+
+        clearCompletedLines();
+    }
+});
+
+function updateBestScore() {
+    if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('bestScore', bestScore);
+        document.getElementById("bestScore").innerText = `Best Score: ${bestScore}`;
+    }
+}
+
+function gameOver() {
+    updateBestScore();
+    alert("Game Over!");
+    resetGame();
+}
+
+function resetGame() {
+    score = 0;
+    grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
+    blocks = [getRandomBlock(), getRandomBlock(), getRandomBlock()];
+    blocksPlacedInBatch = 0;
+    drawBlocks();
+    drawGrid();
+}
+
+function gameLoop() {
+    if (blocks.length > 0) {
+        drawGrid();
+        requestAnimationFrame(gameLoop);
+    }
+}
+
+blocks = [getRandomBlock(), getRandomBlock(), getRandomBlock()];
+document.getElementById("bestScore").innerText = `Best Score: ${bestScore}`;
+drawBlocks();
+gameLoop();
+</script>
+
+</body>
+</html>
