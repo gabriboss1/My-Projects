@@ -17,13 +17,17 @@ Project Bucket List:
 9. ChatGPT add-on
 
 
+
 Projects Done:
 
 1. 2048 Game
 2. Maze Game
 3. Flappy Bird Game
 4. Tic Tac Toe Game
-5. Sudoku Game
-6. Stock Tracker App
-7. Messaging App
-8. 
+5. Block Blast Game
+6. Ping Pong Game
+7. Tetris Game
+8. Sudoku Game
+9. Stock Tracker App
+10. Messaging App
+
