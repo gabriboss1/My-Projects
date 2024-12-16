@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: "Roboto", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #141414;  /* Dark black background */
+            color: #fff;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: #ff6600;  /* Bloomberg Orange */
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #444;
+        }
+
+        th {
+            background: #333;  /* Dark grey for table header */
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #222;  /* Dark grey rows */
+        }
+
+        button {
+            padding: 5px 10px;
+            margin: 5px;
+            background: #ff6600;  /* Bloomberg Orange */
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #e65c00;  /* Slightly darker orange */
+        }
+
+        canvas {
+            margin: 20px 0;
+            max-width: 100%;
+            background-color: #222;  /* Dark background for chart */
+        }
+
+        select {
+            padding: 5px;
+            margin: 10px;
+            border: 1px solid #444;
+            background: #333;  /* Dark grey */
+            color: white;
+            border-radius: 5px;
+        }
+
+        .form-container {
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Stock Tracker</h1>
+    <div class="container">
+        <form id="stock-form" class="form-container">
+            <input type="text" id="symbol" placeholder="Enter Stock Symbol" required>
+            <button type="submit">Add Stock</button>
+        </form>
+        <table id="stock-table">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Price</th>
+                    <th>Chart</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Stocks dynamically inserted here -->
+            </tbody>
+        </table>
+        <canvas id="stock-chart"></canvas>
+        <div>
+            <select id="timeframe">
+                <option value="1d">1 Day</option>
+                <option value="5d">5 Days</option>
+                <option value="1mo">1 Month</option>
+                <option value="3mo">3 Months</option>
+                <option value="1y">1 Year</option>
+                <option value="5y">5 Years</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        const stockForm = document.getElementById('stock-form');
+        const stockTableBody = document.querySelector('#stock-table tbody');
+        const stockChart = document.getElementById('stock-chart');
+        const timeframeSelector = document.getElementById('timeframe');
+        let chart;
+
+        stockForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const symbol = document.getElementById('symbol').value.trim().toUpperCase();
+            const priceResponse = await fetch('/get_price', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `symbol=${encodeURIComponent(symbol)}`,
+            });
+            if (priceResponse.ok) {
+                const priceData = await priceResponse.json();
+                addStockToTable(symbol, priceData.price);
+            } else {
+                alert('Error fetching stock price.');
+            }
+        });
+
+        async function addStockToTable(symbol, price) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${symbol}</td>
+                <td>${price}</td>
+                <td><button onclick="showChart('${symbol}')">View Chart</button></td>
+            `;
+            stockTableBody.appendChild(row);
+        }
+
+        async function showChart(symbol) {
+            const timeframe = timeframeSelector.value;
+            const chartResponse = await fetch('/get_chart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `symbol=${encodeURIComponent(symbol)}&timeframe=${encodeURIComponent(timeframe)}`,
+            });
+            if (chartResponse.ok) {
+                const chartData = await chartResponse.json();
+                const labels = chartData.map(data => data.date);
+                const prices = chartData.map(data => data.close);
+                renderChart(symbol, labels, prices);
+            } else {
+                alert('Error fetching chart data.');
+            }
+        }
+
+        timeframeSelector.addEventListener('change', async () => {
+            const symbol = document.querySelector('#stock-table tbody tr td:first-child')?.textContent;
+            if (symbol) {
+                showChart(symbol);
+            }
+        });
+
+        function renderChart(symbol, labels, prices) {
+            if (chart) {
+                chart.destroy();
+            }
+            chart = new Chart(stockChart, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${symbol} Stock Price`,
+                        data: prices,
+                        borderColor: '#ffffff', 
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { 
+                            display: true,
+                            labels: {
+                                color: '#ffffff',
+                            }
+                        },
+                    },
+                    scales: {
+                        x: { 
+                            title: { 
+                                display: true, 
+                                text: 'Date',
+                                color: '#ffffff',
+                            },
+                            ticks: {
+                                color: '#ffffff', 
+                            }
+                        },
+                        y: { 
+                            title: { 
+                                display: true, 
+                                text: 'Price (USD)',
+                                color: '#ffffff',
+                            },
+                            ticks: {
+                                color: '#ffffff',
+                            }
+                        },
+                    },
+                },
+            });
+        }
+    </script>
+</body>
+</html>
