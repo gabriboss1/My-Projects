@@ -1,4 +1,4 @@
-# E2EE Encryption Messaging App
+# E2EE Messaging App
 
 10/30/2024
 
