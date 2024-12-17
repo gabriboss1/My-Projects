@@ -17,6 +17,9 @@ Gabriele's cool coding projects since November 2023.
 9. ChatGPT add-on
 10. Battleship Game
 11. Asteroid Game
+12. Tetris AI
+13. 2048 AI
+14. 2D Battle Royale
 
 
 
