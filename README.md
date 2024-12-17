@@ -32,4 +32,5 @@ Gabriele's cool coding projects since November 2023.
 8. Sudoku Game
 9. Stock Tracker App
 10. Messaging App
+11. E2EE Messaging App
 
