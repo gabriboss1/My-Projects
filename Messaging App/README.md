@@ -6,4 +6,4 @@ Making a messaging app has always intrigued me, so I decided to build a chat roo
 It is a great way to meet new people from the school. One thing I could implement in the future is a system that bans people who spam messages or write derogatory remarks. 
 Through this, I have strengthened my skills in building an interface and learned more about sockets and their use.
 
-IMPORTANT: The server app had some issues running, as some machines have firewalls enabled that block the running of the program.
+IMPORTANT: The server app could have issues while running, as some machines have firewalls enabled that block the socket transmissions.
