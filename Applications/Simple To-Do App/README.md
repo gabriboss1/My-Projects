@@ -3,7 +3,7 @@
 5/10/2024
 
 
-I am learning to code in C++, so I decided to put my newly acquired skills to practice by making this To-Do app.
-It's very simple, but it is some solid work for being my first C++ program. 
+I am learning to code in C++, so I put my newly acquired skills to practice by making this To-Do app.
+It's very simple, but it is solid work for being my first C++ program. 
 
-The next step would be to implement a UI and make it more functional.
+The next step would be implementing a UI and making the program more functional.
