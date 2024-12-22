@@ -19,7 +19,8 @@ Gabriele's cool coding projects since November 2023.
 11. Asteroid Game
 12. Tetris AI
 13. 2048 AI
-14. 2D Battle Royale
+14. Sudoku AI
+15. 2D Battle Royale
 
 
 
