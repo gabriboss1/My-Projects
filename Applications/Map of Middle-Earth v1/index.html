@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map of Middle-Earth</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="icon" type="image/png" href="icon.png">
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+</head>
+<body>
+    <div id="container">
+        <!-- Sidebar Section -->
+        <div id="sidebar">
+            <div id="logo-title">Map of Middle-Earth</div>
+            <h2>Paths</h2>
+            <ul>
+                <li><label><input type="checkbox" value="All"> All</label></li>
+                <li><label><input type="checkbox" value="Thorin and Company"> Thorin and Company</label></li>
+                <li><label><input type="checkbox" value="Frodo & Sam"> Frodo & Sam</label></li>
+                <li><label><input type="checkbox" value="Merry & Pippin"> Merry & Pippin</label></li>
+                <li><label><input type="checkbox" value="Gimli & Legolas"> Gimli & Legolas</label></li>
+                <li><label><input type="checkbox" value="Boromir"> Boromir</label></li>
+                <li><label><input type="checkbox" value="Aragorn"> Aragorn</label></li>
+                <li><label><input type="checkbox" value="Gandalf the Grey"> Gandalf the Grey</label></li>
+                <li><label><input type="checkbox" value="Gandalf the White"> Gandalf the White</label></li>
+            </ul>
+            <h2>Quests</h2>
+            <ul>
+                <li><label><input type="checkbox" value="Quest for Erebor"> Quest for Erebor</label></li>
+                <li><label><input type="checkbox" value="Quest of the Ring"> Quest of the Ring</label></li>
+            </ul>
+            <h2>Places</h2>
+            <ul>
+                <li><label><input type="checkbox" value="All"> All</label></li>
+                <li><label><input type="checkbox" value="Humans"> Humans</label></li>
+                <li><label><input type="checkbox" value="Elves"> Elves</label></li>
+                <li><label><input type="checkbox" value="Dwarves"> Dwarves</label></li>
+                <li><label><input type="checkbox" value="Hobbits"> Hobbits</label></li>
+                <li><label><input type="checkbox" value="Evil"> Evil</label></li>
+            </ul>
+            <h2>Events</h2>
+            <ul>
+                <li><label><input type="checkbox" value="All"> All</label></li>
+                <li><label><input type="checkbox" value="Battles"> Battles</label></li>
+                <li><label><input type="checkbox" value="Deaths"> Deaths</label></li>
+                <li><label><input type="checkbox" value="Encounters"> Encounters</label></li>
+            </ul>
+            <div id="about-us">
+                <h3>About Me</h3>
+                <p>Welcome to the Map of Middle Earth! I'm a passionate fan of J.R.R. Tolkien's works and aim to create a detailed, interactive experience for exploring the lands of Middle Earth. Whether you're following the paths of the Fellowship or discovering key events and quests, my goal is to bring Tolkien's world to life in a way that engages and educates.</p>
+            </div>
+            <div id="credits">
+                <h4>Credits</h4>
+                <p>Map data and design based on the works of <a href="https://www.tolkienestate.com/" target="_blank">J.R.R. Tolkien</a>.</p>
+                <!-- <p>Map found on <a href="https://imgur.com/highly-detailed-map-of-new-zealand-not-just-some-other-islands-that-look-like-i-promise-NrgFc4C" target="_blank">imgur</a>.</p> -->
+                <p>Interactive map created with <a href="https://leafletjs.com/" target="_blank">Leaflet.js</a> and <a href="https://github.com/Leaflet/Leaflet.markercluster" target="_blank">Leaflet.markercluster</a>.</p>
+            </div>        
+            <div id="copyright-bar">
+                <p>&copy; 2024 Middle-Earth Interactive Map. All rights reserved.</p>
+            </div>
+        
+        </div>
+        <button id="toggle-sidebar">&lt;</button>
+        <!-- Map Section -->
+        <div id="map"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
