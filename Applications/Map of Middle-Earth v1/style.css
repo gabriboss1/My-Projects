@@ -1,0 +1,266 @@
+body {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    background-color: #f9f5e7;
+}
+
+#container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+#sidebar {
+    width: 300px;
+    background-color: #f4e6c8; 
+    padding: 20px;
+    border-right: 2px solid #a6895d;
+    overflow-y: auto;
+    z-index: 2; 
+}
+
+#sidebar h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #4a3c26;
+    border-bottom: 1px solid #a6895d;
+    padding-bottom: 5px;
+}
+
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+#sidebar li {
+    margin-bottom: 10px;
+}
+
+#sidebar label {
+    font-size: 1em;
+    cursor: pointer;
+}
+
+#sidebar input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+#map {
+    flex: 1;
+    height: 100%;
+    background-color: #d4ccb0;
+    position: relative; 
+    z-index: 1;
+}
+
+@font-face {
+    font-family: 'Aniron';
+    src: url('anirm___.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.popup-content {
+    font-family: 'Georgia', serif;
+    line-height: 1.6;
+    max-width: 300px;
+}
+
+.popup-title {
+    font-family: 'Georgia', serif;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.popup-divider {
+    border-top: 1px solid #ccc;
+    margin: 10px 0;
+}
+
+.popup-date {
+    font-size: 16px;
+    font-style: italic;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.popup-description {
+    font-size: 16px;
+    color: #555;
+}
+
+.popup-content h3 {
+    font-family: 'Aniron', serif;
+    font-size: 18px; 
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.leaflet-popup-content-wrapper {
+    background-color: #fdf7f0;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-popup-tip {
+    background-color: #fdf7f0;
+}
+
+.leaflet-popup-content {
+    margin: 0;
+}
+
+.leaflet-popup-close-button {
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+@font-face {
+    font-family: 'Ringbearer';
+    src: url('RINGM___.TTF') format('truetype'); 
+    font-weight: normal;
+    font-style: normal;
+}
+
+#logo-title {
+    font-family: 'Ringbearer', serif;
+    font-size: 36px; 
+    text-align: center;
+    color: #4a3c26; 
+    margin-bottom: 20px;
+    text-transform: uppercase; 
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+#about-us {
+    margin-top: 30px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    border-top: 1px solid #a6895d; 
+    background-color: #f4e6c8;
+}
+
+#about-us h3 {
+    font-size: 1.2em;
+    color: #4a3c26;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#about-us p {
+    font-size: 1em;
+    color: #333; 
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+#credits {
+    margin-top: 20px;
+}
+
+#credits h4 {
+    font-size: 1em;
+    color: #4a3c26; 
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#credits p {
+    font-size: 0.9em;
+    color: #333;
+    margin: 5px 0;
+    line-height: 1.5;
+}
+
+#credits a {
+    color: #4682B4;
+    text-decoration: none;
+}
+
+#credits a:hover {
+    text-decoration: underline;
+}
+
+#sidebar h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #4a3c26;
+    border-bottom: 1px solid #a6895d;
+    padding-bottom: 5px;
+    text-shadow: 0.75px 0.75px 2px rgba(0, 0, 0, 0.3); 
+}
+
+#about-us h3 {
+    font-size: 1.5em;
+    color: #4a3c26;
+    text-shadow: 0.75px 0.75px 2px rgba(0, 0, 0, 0.3); 
+}
+
+#credits h4 {
+    font-size: 1em;
+    color: #4a3c26;
+    text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.3); 
+}
+
+#copyright-bar {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #4a3c26;
+    border-top: 1px solid #a6895d;
+    padding-top: 10px;
+}
+
+#sidebar {
+    width: 300px;
+    background-color: #f4e6c8; 
+    padding: 20px;
+    border-right: 2px solid #a6895d;
+    overflow-y: auto;
+    position: relative;
+    transition: width 0.3s ease-in-out;
+}
+
+#sidebar.collapsed {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#toggle-sidebar {
+    position: absolute;
+    top: 50%;
+    left: 340px; 
+    transform: translateY(-50%); 
+    width: 40px; 
+    height: 80px; 
+    background-color: #4a3c26;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 0 5px 5px 0; 
+    cursor: pointer;
+    z-index: 10; 
+    transition: left 0.3s ease-in-out, background-color 0.2s; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#toggle-sidebar:hover {
+    background-color: #6a5633; 
+}
+
+#toggle-sidebar.collapsed {
+    left: 0;
+    border-radius: 0 5px 5px 0;
+}
