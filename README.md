@@ -44,4 +44,7 @@ Gabriele's cool coding projects since November 2023.
 12. iPhone Viewer
 13. Log-In Page
 14. Snake Game
+15. Platform Game
+16. Space Shooter Game
+17. Minesweeper
 
