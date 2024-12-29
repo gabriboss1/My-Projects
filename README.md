@@ -21,6 +21,8 @@ Gabriele's cool coding projects since November 2023.
 13. 2048 AI
 14. Sudoku AI
 15. 2D Battle Royale
+16. Minecraft Mod
+17. Discord Bot
 
 
 
