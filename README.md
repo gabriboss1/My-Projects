@@ -48,4 +48,6 @@ As of 12/29/2024, there are 22 projects, written in languages like Python, JavaS
 15. Platform Game
 16. Space Shooter Game
 17. Minesweeper
+18. Web Scraper for Stocks
+19. Option Valuation App
 
