@@ -10,7 +10,7 @@ As of 1/11/2024, there are 32 programs written in languages like Python, JavaScr
 1. 2D Obstacle Golf
 2. Chess Game
 3. Sudoku
-4. Web Scraper (regarding Stock picks)
+4. 2D Battle Royale
 5. To-Do app
 6. Personal Portfolio/Stock Tracker
 7. Flashcard App
@@ -23,9 +23,8 @@ As of 1/11/2024, there are 32 programs written in languages like Python, JavaScr
 14. Sudoku AI
 15. Pac-Man Game
 16. Racing Game
-17. 2D Battle Royale
-18. Minecraft Mod
-19. Discord Bot
+17. Minecraft Mod
+18. Discord Bot
 
 
 
