@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Tracker</title> <!-- Title for the browser tab -->
+    <link rel="icon" href="{{ url_for("static", filename="icon.png") }}" type="image/png"> <!-- Link to the icon file -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet"> <!-- Link to Google Fonts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Link to Chart.js library -->
+    <style>
+        body {
+            font-family: "Roboto", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #141414;
+            color: #fff;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: #ff6600;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .ticker {
+            background: #000;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            margin: 20px 0;
+            padding: 10px 0;
+            border-top: 2px solid #ff6600;
+            border-bottom: 2px solid #ff6600;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            animation: ticker-scroll 20s linear infinite;
+        }
+
+        .ticker span {
+            margin: 0 20px;
+            font-size: 1.1rem;
+        }
+
+        .up {
+            color: #0f0;
+        }
+
+        .down {
+            color: #f00;
+        }
+
+        @keyframes ticker-scroll {
+            from { transform: translateX(100%); }
+            to { transform: translateX(-100%); }
+        }
+
+        .stock-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stock-item {
+            background: #222;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            width: 200px;
+            text-align: left;
+        }
+
+        .stock-item h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #ff6600;
+        }
+
+        .stock-item p {
+            margin: 5px 0;
+            font-size: 1rem;
+        }
+
+        .stock-item button {
+            padding: 5px 10px;
+            background: #ff6600;
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .stock-item button:hover {
+            background: #e65c00;
+        }
+
+        #stock-chart {
+            max-width: 100%;
+            height: 400px;
+            background: #222;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .timeframe-container {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        select {
+            background: #333;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 0px;
+            margin-bottom: 20px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #ff6600;
+        }
+
+        #stock-form {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #symbol {
+            padding: 10px;
+            border: 2px solid #ff6600;
+            border-radius: 5px;
+            background: #333;
+            color: #fff;
+            font-size: 1rem;
+            width: 200px;
+        }
+
+        #symbol:focus {
+            outline: none;
+            border-color: #e65c00;
+        }
+
+        #stock-form button {
+            padding: 10px 20px;
+            background: #ff6600;
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        #stock-form button:hover {
+            background: #e65c00;
+        }
+    </style>
+</head>
+<body>
+    <h1>Stock Tracker</h1> <!-- heading -->
+
+    <!-- Ticker Section -->
+    <div class="ticker">
+        <div id="ticker-content" class="ticker-content"></div> <!-- Ticker content will be dynamically updated -->
+    </div>
+
+    <!-- Stock Section -->
+    <div class="container">
+        <form id="stock-form">
+            <input type="text" id="symbol" placeholder="Enter Stock Symbol" required>
+            <button type="submit">Add Stock</button>
+        </form>
+
+        <div id="stock-list" class="stock-list"></div> <!-- Stocks will be dynamically updated -->
+
+        <canvas id="stock-chart"></canvas> <!-- Canvas for chart -->
+        <div class="timeframe-container">
+            <select id="timeframe">
+                <option value="1d">1 Day</option>
+                <option value="5d">5 Days</option>
+                <option value="1mo">1 Month</option>
+                <option value="3mo">3 Months</option>
+                <option value="1y">1 Year</option>
+                <option value="5y">5 Years</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        const tickerContent = document.getElementById("ticker-content"); // Get the ticker content element
+        const stockForm = document.getElementById("stock-form"); // Get the stock form element
+        const stockList = document.getElementById("stock-list"); // Get the stock list element
+        const stockChart = document.getElementById("stock-chart"); // Get the stock chart canvas element
+        const timeframeSelector = document.getElementById("timeframe"); // Get the timeframe selector element
+        let chart; // Variable to store the chart instance
+        let currentSymbol = null; // Variable to store the current stock symbol
+
+        // Fetch and Display Ticker Content
+        async function fetchTicker() { // Asynchronous to not block the main thread
+            const response = await fetch("/get_notable"); // Send a GET request to the /get_notable endpoint
+            const stocks = await response.json(); // Parse the JSON response
+            tickerContent.innerHTML = stocks.map(stock => {
+                const color = stock.direction === "up" ? "up" : "down"; // Determine the color based on the direction
+                return `<span class="${color}">${stock.symbol}: $${stock.price} ${stock.direction === "up" ? "▲" : "▼"} ${stock.percentage}</span>`;
+            }).join(""); // Join into a single string
+        }
+
+        fetchTicker();
+        setInterval(fetchTicker, 10000);
+
+        // Fetch and Update Stock List Prices
+        async function updateStockList() {
+            const items = stockList.querySelectorAll(".stock-item"); // Get all stock items in the stock list
+            for (const item of items) {
+                const symbol = item.querySelector(".stock-symbol").textContent; // Get the stock symbol from the item
+                const res = await fetch("/get_price", {
+                    method: "POST", // Send a POST request
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"}, // Set the content type to URL encoded
+                    body: `symbol=${symbol}` // Set the request body
+                });
+                const data = await res.json(); // Parse the JSON response
+                if (res.ok) {
+                    const priceElement = item.querySelector(".stock-price"); // Get the price element
+                    const percentageElement = item.querySelector(".stock-percentage"); // Get the percentage element
+                    const openingPrice = parseFloat(data.opening_price.replace("$", "")); // Get the opening price
+                    const newPrice = parseFloat(data.price.replace("$", "")); // Get the new price
+                    const percentageChange = ((newPrice - openingPrice) / openingPrice) * 100; // Calculate the percentage change
+
+                    priceElement.textContent = data.price; // Update the price element
+                    percentageElement.textContent = `${percentageChange.toFixed(2)}%`; // Update the percentage (2 decimal places)
+
+                    if (newPrice > openingPrice) {
+                        priceElement.style.color = "green";
+                        percentageElement.style.color = "green";
+                    } else if (newPrice < openingPrice) {
+                        priceElement.style.color = "red";
+                        percentageElement.style.color = "red";
+                    } else {
+                        priceElement.style.color = "";
+                        percentageElement.style.color = "";
+                    }
+                }
+            }
+        }
+
+        setInterval(updateStockList, 10000);
+
+        stockForm.addEventListener("submit", async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+            const symbol = document.getElementById("symbol").value.trim().toUpperCase(); // Get the stock symbol from the input
+
+            // Check if the stock symbol already exists in the watchlist
+            const existingSymbols = Array.from(document.querySelectorAll(".stock-symbol")).map(el => el.textContent);
+            if (existingSymbols.includes(symbol)) {
+                alert("Stock already in watchlist"); // Show an alert if the stock is already in the watchlist
+                return;
+            }
+
+            const res = await fetch("/get_price", {
+                method: "POST", // Send a POST request
+                headers: {"Content-Type": "application/x-www-form-urlencoded"}, // Set the content type to URL encoded
+                body: `symbol=${symbol}` // Set the request body
+            });
+            const data = await res.json();
+            if (res.ok) {
+                const item = document.createElement("div");
+                item.classList.add("stock-item"); // Add the "stock-item" class to the div
+                item.innerHTML = `
+                    <h2 class="stock-symbol">${symbol}</h2>
+                    <p class="stock-price">${data.price}</p> 
+                    <p class="stock-percentage">0.00%</p>
+                    <button type="button" onclick="showChart('${symbol}')">View Chart</button>
+                `;
+                // Initial percentage change is 0.00%
+                stockList.appendChild(item); // Add stock to the list
+            } else {
+                alert(data.error || "Error fetching price"); // Show an error if the request failed
+            }
+        });
+        
+        async function showChart(symbol) { // Asynchronous to not block the main thread
+            currentSymbol = symbol; // Set the current symbol
+            const timeframe = timeframeSelector.value; // Get the selected timeframe
+            const res = await fetch("/get_chart", { // Send a POST request to the /get_chart and wait for the response
+                method: "POST", // Send a POST request
+                headers: {"Content-Type": "application/x-www-form-urlencoded"}, // Set the content type to URL encoded
+                body: `symbol=${symbol}&timeframe=${timeframe}` // Set the request body
+            });
+            const data = await res.json(); // Parse the JSON response
+
+            if (res.ok) {
+                const labels = data.map(item => item.date); // Get the dates for the chart labels
+                const prices = data.map(item => item.close); // Get the closing prices for the chart data
+
+                if (chart) {
+                    chart.destroy();  // Remove the current chart if it exists
+                }
+
+                chart = new Chart(stockChart, { // Create a new chart instance with Chart.js
+                    type: "line", // Set the chart type to line
+                    data: {
+                        labels: labels, // Set the labels for the chart
+                        datasets: [{
+                            label: `${symbol} Stock Price`,
+                            data: prices,
+                            borderColor: "#ff6600",
+                            backgroundColor: "rgba(255, 102, 0, 0.2)", // Set the background color as 0.2 opaque for a transparent orange
+                            fill: true, // Fill the area under the line
+                            borderWidth: 2, // Set the border width
+                        }]
+                    },
+                    options: {
+                        responsive: true, // Make the chart responsive
+                        plugins: {
+                            tooltip: {
+                                enabled: true, // Enable tooltips
+                                mode: "index", // Set the tooltip mode to index
+                                intersect: false,
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return `$${tooltipItem.raw.toFixed(2)}`; // Format the tooltip label
+                                    },
+                                    title: function(tooltipItem) {
+                                        return tooltipItem[0]?.label || ""; // Format the tooltip title
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true, // Display the x-axis title
+                                    text: "Date",
+                                    color: "#ff6600"
+                                },
+                                grid: {
+                                    color: "#444" // Set the x-axis grid color
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true, // Display the y-axis title
+                                    text: "Price (USD)",
+                                    color: "#ff6600"
+                                },
+                                ticks: {
+                                    beginAtZero: false, // Do not begin the y-axis at zero
+                                    callback: function(value) { return "$" + value.toFixed(2); } // Format the y-axis ticks
+                                },
+                                grid: {
+                                    color: "#444" // Set the y-axis grid color
+                                }
+                            }
+                        },
+                        elements: {
+                            point: {
+                                radius: 0 // Set the point radius to zero (looks nicer)
+                            }
+                        }
+                    }
+                });
+            } else {
+                alert(data.error || "Error fetching chart data"); // Show an error message if the request failed
+            }
+        }
+
+        // Update chart when timeframe is changed
+        timeframeSelector.addEventListener("change", async () => {
+            if (currentSymbol) {
+                showChart(currentSymbol);  // Re-fetch chart with new timeframe
+            }
+        });
+    </script>
+</body>
+</html>
