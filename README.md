@@ -2,7 +2,7 @@
 Gabriele's cool coding projects since November 2023. 
 
 
-As of 12/31/2024, there are 29 projects written in languages like Python, JavaScript, C, and C++, which often use HTML and CSS.
+As of 1/11/2024, there are 32 programs written in languages like Python, JavaScript, C, and C++, often using HTML and CSS.
 
 
 **Project Bucket List:**
