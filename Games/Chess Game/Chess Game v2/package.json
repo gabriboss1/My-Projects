@@ -1,0 +1,32 @@
+{
+  "name": "chess-electron-app",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "electron": "electron .",
+    "build": "react-scripts build"
+  },
+  "dependencies": {
+    "chess.js": "^1.0.0",
+    "electron": "^29.0.0",
+    "react": "^18.0.0",
+    "react-chessboard": "^2.1.3",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "react-scripts": "5.0.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
