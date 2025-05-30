@@ -48,4 +48,5 @@ As of 1/11/2024, there are 32 programs written in languages like Python, JavaScr
 17. Minesweeper
 18. Web Scraper for Stocks
 19. Option Valuation App
+20. Chess Game
 
