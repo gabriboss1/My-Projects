@@ -8,23 +8,22 @@ As of 1/11/2024, there are 32 programs written in languages like Python, JavaScr
 **Project Bucket List:**
 
 1. 2D Obstacle Golf
-2. Chess Game
-3. Sudoku
-4. 2D Battle Royale
-5. To-Do app
-6. Personal Portfolio/Stock Tracker
-7. Flashcard App
-8. Typing Speed Test
-9. ChatGPT add-on
-10. Battleship Game
-11. Asteroid Game
-12. Tetris AI
-13. 2048 AI
-14. Sudoku AI
-15. Pac-Man Game
-16. Racing Game
-17. Minecraft Mod
-18. Discord Bot
+2. Sudoku
+3. 2D Battle Royale
+4. To-Do app
+5. Personal Portfolio/Stock Tracker
+6. Flashcard App
+7. Typing Speed Test
+8. ChatGPT add-on
+9. Battleship Game
+10. Asteroid Game
+11. Tetris AI
+12. 2048 AI
+13. Sudoku AI
+14. Pac-Man Game
+15. Racing Game
+16. Minecraft Mod
+17. Discord Bot
 
 
 
