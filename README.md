@@ -5,6 +5,7 @@ Gabriele's cool coding projects since November 2023.
 As of 1/11/2024, there are 32 programs written in languages like Python, JavaScript, C, and C++, often using HTML and CSS.
 
 
+
 **Projects Done:**
 
 1. 2048 Game
